@@ -169,9 +169,8 @@ class SpotifyClient:
         public: bool = False
     ) -> Dict:
         """Crée une nouvelle playlist sur le compte de l'utilisateur."""
-        user_id = self.get_current_user_id()
         headers = self._get_headers()
-        url = f"{self.API_BASE_URL}/users/{user_id}/playlists"
+        url = f"{self.API_BASE_URL}/me/playlists"
         body = {
             "name": name,
             "description": description,
@@ -191,7 +190,8 @@ class SpotifyClient:
             return 0
 
         headers = self._get_headers()
-        url = f"{self.API_BASE_URL}/playlists/{playlist_id}/tracks"
+        # Spotify Web API utilise désormais /items (avec fallback /tracks)
+        url = f"{self.API_BASE_URL}/playlists/{playlist_id}/items"
         chunk_size = 100
         added_count = 0
 
@@ -199,6 +199,10 @@ class SpotifyClient:
             chunk = track_uris[i:i + chunk_size]
             body = {"uris": chunk}
             resp = requests.post(url, headers=headers, json=body, timeout=15)
+            if resp.status_code == 404:
+                # Ancienne route de secours
+                fallback_url = f"{self.API_BASE_URL}/playlists/{playlist_id}/tracks"
+                resp = requests.post(fallback_url, headers=headers, json=body, timeout=15)
             resp.raise_for_status()
             added_count += len(chunk)
 
