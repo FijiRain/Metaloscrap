@@ -15,7 +15,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 from dotenv import load_dotenv
 
-REDIRECT_URI = "http://localhost:8888/callback"
+REDIRECT_URI = "http://127.0.0.1:8888/callback"
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 SCOPES = "playlist-modify-public playlist-modify-private playlist-read-private"
@@ -78,7 +78,7 @@ def main():
     print(f"   dans votre Spotify Developer Dashboard (Edit Settings > Redirect URIs) :")
     print(f"   \033[1;36m{REDIRECT_URI}\033[0m\n")
 
-    server = HTTPServer(("localhost", 8888), OAuthCallbackHandler)
+    server = HTTPServer(("127.0.0.1", 8888), OAuthCallbackHandler)
     print(f"🌐 Ouverture du navigateur pour autoriser Metaloscrap...")
     webbrowser.open(url)
 

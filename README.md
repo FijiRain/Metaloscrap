@@ -51,7 +51,7 @@ Pour que Metaloscrap puisse créer des playlists sur votre compte sans vous dema
 3. Renseignez :
    - **App name :** `Metaloscrap`
    - **App description :** `Scraping Metalorgie pour sorties d'albums`
-   - **Redirect URI :** `http://localhost:8888/callback` *(très important !)*
+   - **Redirect URI :** `http://127.0.0.1:8888/callback` *(très important, Spotify refuse désormais `localhost` !)*
    - Cochez les conditions d'utilisation et validez (**Save**).
 4. Sur la page de votre application, allez dans **Settings** et notez votre **Client ID** et votre **Client Secret**.
 
