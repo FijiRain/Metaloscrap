@@ -1,0 +1,43 @@
+name: Metaloscrap Weekly Playlist
+
+on:
+  schedule:
+    # Tous les vendredis à 18h00 UTC
+    - cron: '0 18 * * 5'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Forcer la création même si la playlist existe déjà'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  update-playlist:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Installer Python et synchroniser l'environnement
+        run: uv sync --frozen || uv sync
+
+      - name: Exécuter Metaloscrap
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ inputs.force }}" = "true" ]; then
+            EXTRA_ARGS="--force"
+          fi
+          uv run python metaloscrap.py $EXTRA_ARGS
